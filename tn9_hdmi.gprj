@@ -1,0 +1,26 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW1NR-9C" pn="GW1NR-LV9QN88PC6/I5">gw1nr9c-004</Device>
+    <FileList>
+        <File path="src/clocks/clocks.v" type="file.verilog" enable="1"/>
+        <File path="src/config.sv" type="file.verilog" enable="1"/>
+        <File path="src/gen_audio.v" type="file.verilog" enable="1"/>
+        <File path="src/gen_video.v" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/audio_clock_regeneration_packet.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/audio_info_frame.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/audio_sample_packet.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/auxiliary_video_information_info_frame.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/hdmi.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/packet_assembler.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/packet_picker.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/serializer.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/source_product_description_info_frame.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi2/tmds_channel.sv" type="file.verilog" enable="1"/>
+        <File path="src/hdmi_top.sv" type="file.verilog" enable="1"/>
+        <File path="src/top.v" type="file.verilog" enable="1"/>
+        <File path="src/tn9k.cst" type="file.cst" enable="1"/>
+    </FileList>
+</Project>
