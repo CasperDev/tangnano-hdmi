@@ -15,6 +15,7 @@ Amount of used resource depends on Gowin IDE version you use. Seems like new 1.9
 ### Gowin IDE 1.9.9 Beta-3 build(67298) - Tangnano 9k
 
 |Resource|Usage|Utilization|
+|---|---|---|
 |Logic|1194(974 LUT, 88 ALU, 132 ROM16) / 8640|14%|
 |Register|668 / 6693|10%|
 |  --Register as Latch|0 / 6693|0%|
@@ -24,6 +25,7 @@ Amount of used resource depends on Gowin IDE version you use. Seems like new 1.9
 ### Gowin IDE 1.9.9 Beta-3 build(67298) - Tangnano 20k
 
 |Resource|Usage|Utilization|
+|---|---|---|
 |Logic|1207(988 LUTs, 87 ALUs, 132 ROM16) / 20736|6%|
 |Register|668 / 15750|5%|
 |  --Register as Latch|0 / 15750|0%|
@@ -33,6 +35,7 @@ Amount of used resource depends on Gowin IDE version you use. Seems like new 1.9
 ### Gowin IDE 1.9.8.06 build(57742) - Tangnano 9k
 
 |Resource|Usage|Utilization|
+|---|---|---|
 |Logic|2009(1258 LUTs, 68 ALUs, 683 SSRAMs) / 8640|23%|
 |Register|668 / 6693|10%|
 |  --Register as Latch|0 / 6693|0%|
@@ -42,6 +45,7 @@ Amount of used resource depends on Gowin IDE version you use. Seems like new 1.9
 ### Gowin IDE 1.9.8.06 build(57742) - Tangnano 20k
 
 |Resource|Usage|Utilization|
+|---|---|---|
 |Logic|2013(1262 LUTs, 68 ALUs, 683 SSRAMs) / 20736|10%|
 |Register|668 / 15750|4%|
 |  --Register as Latch|0 / 15750|0%|
