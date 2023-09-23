@@ -3,7 +3,7 @@
 <Project>
     <Template>FPGA</Template>
     <Version>5</Version>
-    <Device name="GW1NR-9C" pn="GW1NR-LV9QN88PC6/I5">gw1nr9c-004</Device>
+    <Device name="GW2AR-18C" pn="GW2AR-LV18QN88C7/I6">gw2ar18c-001</Device>
     <FileList>
         <File path="src/clocks/clocks.v" type="file.verilog" enable="1"/>
         <File path="src/config.sv" type="file.verilog" enable="1"/>
@@ -20,7 +20,7 @@
         <File path="src/hdmi2/source_product_description_info_frame.sv" type="file.verilog" enable="1"/>
         <File path="src/hdmi2/tmds_channel.sv" type="file.verilog" enable="1"/>
         <File path="src/hdmi_top.sv" type="file.verilog" enable="1"/>
-        <File path="src/tn9k_top.v" type="file.verilog" enable="1"/>
-        <File path="src/tn9k.cst" type="file.cst" enable="1"/>
+        <File path="src/tn20k_top.v" type="file.verilog" enable="1"/>
+        <File path="src/tn20k.cst" type="file.cst" enable="1"/>
     </FileList>
 </Project>

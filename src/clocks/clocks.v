@@ -1,6 +1,8 @@
 import configPackage::*;
 
-module clocks (
+module clocks #(
+  parameter DEVICE = "GW1NR-9C"
+) (
   input wire I_clk27,         // board clock 27MHz
   input wire I_reset_n,       // manual reset button (active low)
   output wire O_clk_pixel,    // HDMI or VGA pixel clock           27MHz for 480p, 74.25MHz for 720p
@@ -64,7 +66,7 @@ defparam hdmi_pll.CLKOUTD_BYPASS = "false";
 defparam hdmi_pll.DYN_SDIV_SEL = DYN_SDIV_SEL_X5;
 defparam hdmi_pll.CLKOUTD_SRC = "CLKOUT";
 defparam hdmi_pll.CLKOUTD3_SRC = "CLKOUT";
-defparam hdmi_pll.DEVICE = "GW1NR-9C";
+defparam hdmi_pll.DEVICE = DEVICE;
 
 `ifdef RES_480P
 
