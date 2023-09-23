@@ -52,11 +52,12 @@ Amount of used resource depends on Gowin IDE version you use. Seems like new 1.9
 ## Change resolution
 
 In order to choose resolution you have to change define declaration in file src/config.sv
+Pick one and comment out other.
 
-...
+```
 `define RES_480P /* for 720x480 @ 59.94Hz resolution */
-`define RES_720P /* for 1280x720 @ 60Hz resolution */
-...
+//`define RES_720P /* for 1280x720 @ 60Hz resolution */
+```
 
 No need to recreate Gowin PLL IP - just compile as usual and upload to board.
 
