@@ -87,8 +87,9 @@ defparam hdmi_pll.DEVICE = DEVICE;
 defparam hdmiclkdiv.DIV_MODE = "5";
 defparam hdmiclkdiv.GSREN = "false";
 
-`else // not RES_480P and not RES_720P so what?
-
+`else 
+`ifndef RES_480P // not RES_480P and not RES_720P so what?
+  
   $error("Define RES_480p or RES_720p in config.sv file");
 
 `endif // RES_480P or RES_720P
