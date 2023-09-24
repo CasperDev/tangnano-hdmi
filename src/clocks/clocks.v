@@ -92,6 +92,7 @@ defparam hdmiclkdiv.GSREN = "false";
   
   $error("Define RES_480p or RES_720p in config.sv file");
 
+`endif  // not RES_480P 
 `endif // RES_480P or RES_720P
 
   localparam AUDIO_CLK_DELAY = CLKFRQ * 1000 / AUDIO_RATE / 2;
