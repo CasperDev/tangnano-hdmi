@@ -1,17 +1,23 @@
-IO_LOC "I_clk27" 4;       // crystal
-IO_PORT "I_clk27" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+//Copyright (C)2014-2025 Gowin Semiconductor Corporation.
+//All rights reserved. 
+//File Title: Physical Constraints file
+//Tool Version: V1.9.12 (64-bit)
+//Part Number: GW2AR-LV18QN88C7/I6
+//Device: GW2AR-18
+//Device Version: C
+//Created Time: Thu 09 18 11:35:02 2025
 
-IO_LOC "I_reset" 87;
-IO_PORT "I_reset" PULL_MODE=NONE;
-IO_LOC "I_play_audio" 88;
-IO_PORT "I_play_audio" PULL_MODE=NONE;
-
-// HDMI
 IO_LOC "tmds_d_p[0]" 35,36;
-IO_PORT "tmds_d_p[0]" PULL_MODE=NONE DRIVE=8;
+IO_PORT "tmds_d_p[0]" IO_TYPE=LVCMOS33D PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC "tmds_d_p[1]" 37,38;
-IO_PORT "tmds_d_p[1]" PULL_MODE=NONE DRIVE=8;
+IO_PORT "tmds_d_p[1]" IO_TYPE=LVCMOS33D PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC "tmds_d_p[2]" 39,40;
-IO_PORT "tmds_d_p[2]" PULL_MODE=NONE DRIVE=8;
+IO_PORT "tmds_d_p[2]" IO_TYPE=LVCMOS33D PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC "tmds_clk_p" 33,34;
-IO_PORT "tmds_clk_p" PULL_MODE=NONE DRIVE=8;
+IO_PORT "tmds_clk_p" IO_TYPE=LVCMOS33D PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "I_play_audio" 88;
+IO_PORT "I_play_audio" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_LOC "I_reset" 87;
+IO_PORT "I_reset" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
+IO_LOC "I_clk27" 4;
+IO_PORT "I_clk27" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
