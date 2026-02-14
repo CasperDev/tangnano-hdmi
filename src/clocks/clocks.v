@@ -47,14 +47,14 @@ rPLL hdmi_pll (
 
 defparam hdmi_pll.FCLKIN = "27";
 defparam hdmi_pll.DYN_IDIV_SEL = "false";
-defparam hdmi_pll.IDIV_SEL = IDIV_SEL_X5;
+defparam hdmi_pll.IDIV_SEL = 0;
 defparam hdmi_pll.DYN_FBDIV_SEL = "false";
-defparam hdmi_pll.FBDIV_SEL = FBDIV_SEL_X5;
+defparam hdmi_pll.FBDIV_SEL = 4;
 defparam hdmi_pll.DYN_ODIV_SEL = "false";
-defparam hdmi_pll.ODIV_SEL = ODIV_SEL_X5;
+defparam hdmi_pll.ODIV_SEL = 4;
 defparam hdmi_pll.PSDA_SEL = "0000";
 defparam hdmi_pll.DYN_DA_EN = "true";
-defparam hdmi_pll.DUTYDA_SEL = DUTYDA_SEL_X5;
+defparam hdmi_pll.DUTYDA_SEL = "1000";
 defparam hdmi_pll.CLKOUT_FT_DIR = 1'b1;
 defparam hdmi_pll.CLKOUTP_FT_DIR = 1'b1;
 defparam hdmi_pll.CLKOUT_DLY_STEP = 0;
@@ -63,39 +63,16 @@ defparam hdmi_pll.CLKFB_SEL = "internal";
 defparam hdmi_pll.CLKOUT_BYPASS = "false";
 defparam hdmi_pll.CLKOUTP_BYPASS = "false";
 defparam hdmi_pll.CLKOUTD_BYPASS = "false";
-defparam hdmi_pll.DYN_SDIV_SEL = DYN_SDIV_SEL_X5;
+defparam hdmi_pll.DYN_SDIV_SEL = 2;
 defparam hdmi_pll.CLKOUTD_SRC = "CLKOUT";
 defparam hdmi_pll.CLKOUTD3_SRC = "CLKOUT";
 defparam hdmi_pll.DEVICE = DEVICE;
 
-`ifdef RES_480P
-
   assign O_clk_pixel = I_clk27;
   assign pixel_lock = 1'b1;
 
-`endif
-`ifdef RES_720P
 
-  CLKDIV hdmiclkdiv (
-    .CLKOUT(O_clk_pixel),
-    .HCLKIN(O_clk_hdmiser),
-    .RESETN(hdmi_pll_lock),
-    .CALIB(gw_gnd)
-  );
-  assign pixel_lock = 1'b1;
-
-defparam hdmiclkdiv.DIV_MODE = "5";
-defparam hdmiclkdiv.GSREN = "false";
-
-`else 
-`ifndef RES_480P // not RES_480P and not RES_720P so what?
-  
-  $error("Define RES_480p or RES_720p in config.sv file");
-
-`endif  // not RES_480P 
-`endif // RES_480P or RES_720P
-
-  localparam AUDIO_CLK_DELAY = CLKFRQ * 1000 / AUDIO_RATE / 2;
+  localparam AUDIO_CLK_DELAY = CLKFRQ * 1000 / 48000 / 2;
   reg [$clog2(AUDIO_CLK_DELAY)-1:0] audio_divider;
   reg clk_audio = 0;
 

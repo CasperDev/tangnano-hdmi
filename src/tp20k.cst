@@ -1,0 +1,19 @@
+IO_LOC "I_clk27" H11;       // crystal
+IO_PORT "I_clk27" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+IO_LOC "I_reset_n" T10;
+IO_PORT "I_reset_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "I_play_audio_n" D7;
+IO_PORT "I_play_audio_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "I_PAL50" T5;
+IO_PORT "I_PAL50" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+// HDMI
+IO_LOC "tmds_d_p[0]" H14,H16;
+IO_PORT "tmds_d_p[0]" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_d_p[1]" J15,K16;
+IO_PORT "tmds_d_p[1]" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_d_p[2]" K14,K15;
+IO_PORT "tmds_d_p[2]" PULL_MODE=NONE DRIVE=8;
+IO_LOC "tmds_clk_p" G16,H15;
+IO_PORT "tmds_clk_p" PULL_MODE=NONE DRIVE=8;

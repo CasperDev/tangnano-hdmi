@@ -15,17 +15,17 @@ module hdmi_top(
 	// HDMI clocks
 	input I_clk_pixel,
 	input I_clk_serial,
-  input I_clk_audio,
+  	input I_clk_audio,
+	input I_PAL50,			// PAL50 switch SW[0], set to 1 for 576p resolution, 0 for 480p resolution
+	input [23:0] rgb,
+	input [15:0] sample,
 
-  input [23:0] rgb,
-  input [AUDIO_BIT_WIDTH-1:0] sample,
-
-  output [VIDEO_X_BITWIDTH-1:0] pixX,
-  output [VIDEO_Y_BITWIDTH-1:0] pixY,
-  output [VIDEO_X_BITWIDTH-1:0] frameWidth,
-  output [VIDEO_Y_BITWIDTH-1:0] frameHeight,
-  output [VIDEO_X_BITWIDTH-1:0] screenWidth,
-  output [VIDEO_Y_BITWIDTH-1:0] screenHeight,
+	output [9:0] pixX,
+	output [9:0] pixY,
+	output [9:0] frameWidth,
+	output [9:0] frameHeight,
+	output [9:0] screenWidth,
+	output [9:0] screenHeight,
 
 	// HDMI output signals
 	output       tmds_clk_n,
@@ -49,29 +49,22 @@ module hdmi_top(
     logic[2:0] tmds;
     logic tmdsClk;
 
-    hdmi #( .VIDEO_ID_CODE(VIDEOID), 
-            .DVI_OUTPUT(0), 
-            .VIDEO_REFRESH_RATE(VIDEO_REFRESH),
-            .IT_CONTENT(1),
-            .AUDIO_RATE(AUDIO_RATE), 
-            .AUDIO_BIT_WIDTH(AUDIO_BIT_WIDTH),
-            .START_X(0),
-            .START_Y(0) )
-
-    hdmi( .clk_pixel_x5(I_clk_serial), 
-          .clk_pixel(I_clk_pixel), 
-          .clk_audio(I_clk_audio),
-          .rgb(rgb), 
-          .reset( ~I_reset_n ),
-          .audio_sample_word(audio_sample_word),
-          .tmds(tmds), 
-          .tmds_clock(tmdsClk), 
-          .cx(pixX), 
-          .cy(pixY),
-          .frame_width( frameWidth ),
-          .frame_height( frameHeight ), 
-          .screen_width( screenWidth ),
-          .screen_height( screenHeight ) 
+    hdmi hdmi( 
+		.clk_pixel_x5(I_clk_serial), 
+		.clk_pixel(I_clk_pixel), 
+		.clk_audio(I_clk_audio),
+		.rgb(rgb), 
+		.reset( ~I_reset_n ),
+		.Pal50(I_PAL50),
+		.audio_sample_word(audio_sample_word),
+		.tmds(tmds), 
+		.tmds_clock(tmdsClk), 
+		.cx(pixX), 
+		.cy(pixY),
+		.frame_width( frameWidth ),
+		.frame_height( frameHeight ), 
+		.screen_width( screenWidth ),
+		.screen_height( screenHeight ) 
     );
 
     // Gowin LVDS output buffer

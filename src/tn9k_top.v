@@ -21,8 +21,8 @@ wire sys_reset_n;       // 0 when clocks NOT ready or button pressed
 clocks #(.DEVICE("GW1NR-9C") ) clocks_inst(I_clk27,I_reset_n, clk_pixel, clk_hdmi_serial,clk_audio,sys_reset_n);
 
 wire [23:0] rgb;
-wire [VIDEO_X_BITWIDTH-1:0] pixX, frameWidth, screenWidth;
-wire [VIDEO_Y_BITWIDTH-1:0] pixY, frameHeight, screenHeight;
+wire [9:0] pixX, frameWidth, screenWidth;
+wire [9:0] pixY, frameHeight, screenHeight;
 
 gen_video just_border(
   .I_clk_pixel(clk_pixel),
@@ -33,8 +33,8 @@ gen_video just_border(
   .screenHeight(screenHeight),
   .rgb(rgb)
 );
-wire [AUDIO_BIT_WIDTH-1:0] sample_gen;
-wire [AUDIO_BIT_WIDTH-1:0] sample;
+wire [15:0] sample_gen;
+wire [15:0] sample;
 
 gen_audio sin_1kHz(
   .I_clk_audio(clk_audio),

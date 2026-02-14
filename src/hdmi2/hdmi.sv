@@ -3,10 +3,6 @@
 
 module hdmi 
 #(
-    // Defaults to 640x480 which should be supported by almost if not all HDMI sinks.
-    // See README.md or CEA-861-D for enumeration of video id codes.
-    // Pixel repetition, interlaced scans and other special output modes are not implemented (yet).
-    parameter int VIDEO_ID_CODE = 1,
 
     // The IT content bit indicates that image samples are generated in an ad-hoc
     // manner (e.g. directly from values in a framebuffer, as by a PC video
@@ -17,50 +13,11 @@ module hdmi
     //
     // This flag also tends to cause receivers to treat RGB values as full
     // range (0-255).
-    parameter bit IT_CONTENT = 1'b1,
-
-    // Defaults to minimum bit lengths required to represent positions.
-    // Modify these parameters if you have alternate desired bit lengths.
-    parameter int BIT_WIDTH = VIDEO_ID_CODE < 4 ? 10 : VIDEO_ID_CODE == 4 ? 11 : 12,
-    parameter int BIT_HEIGHT = VIDEO_ID_CODE == 16 ? 11: 10,
 
     // A true HDMI signal sends auxiliary data (i.e. audio, preambles) which prevents it from being parsed by DVI signal sinks.
     // HDMI signal sinks are fortunately backwards-compatible with DVI signals.
     // Enable this flag if the output should be a DVI signal. You might want to do this to reduce resource usage or if you're only outputting video.
-    parameter bit DVI_OUTPUT = 1'b0,
-
-    // **All parameters below matter ONLY IF you plan on sending auxiliary data (DVI_OUTPUT == 1'b0)**
-
-    // Specify the refresh rate in Hz you are using for audio calculations
-    parameter real VIDEO_REFRESH_RATE = 59.94,
-
-    // As specified in Section 7.3, the minimal audio requirements are met: 16-bit or more L-PCM audio at 32 kHz, 44.1 kHz, or 48 kHz.
-    // See Table 7-4 or README.md for an enumeration of sampling frequencies supported by HDMI.
-    // Note that sinks may not support rates above 48 kHz.
-    parameter int AUDIO_RATE = 44100,
-
-    // Defaults to 16-bit audio, the minmimum supported by HDMI sinks. Can be anywhere from 16-bit to 24-bit.
-    parameter int AUDIO_BIT_WIDTH = 16,
-
-    // Some HDMI sinks will show the source product description below to users (i.e. in a list of inputs instead of HDMI 1, HDMI 2, etc.).
-    // If you care about this, change it below.
-    parameter bit [8*8-1:0] VENDOR_NAME = {"Unknown", 8'd0}, // Must be 8 bytes null-padded 7-bit ASCII
-    parameter bit [8*16-1:0] PRODUCT_DESCRIPTION = {"FPGA", 96'd0}, // Must be 16 bytes null-padded 7-bit ASCII
-    parameter bit [7:0] SOURCE_DEVICE_INFORMATION = 8'h00, // See README.md or CTA-861-G for the list of valid codes
-
-    // Starting screen coordinate when module comes out of reset.
-    //
-    // Setting these to something other than (0, 0) is useful when positioning
-    // an external video signal within a larger overall frame (e.g.
-    // letterboxing an input video signal). This allows you to synchronize the
-    // negative edge of reset directly to the start of the external signal
-    // instead of to some number of clock cycles before.
-    //
-    // You probably don't need to change these parameters if you are
-    // generating a signal from scratch instead of processing an
-    // external signal.
-    parameter int START_X = 0,
-    parameter int START_Y = 0
+    parameter bit DVI_OUTPUT = 1'b0
 )
 (
     input logic clk_pixel_x5,
@@ -68,8 +25,9 @@ module hdmi
     input logic clk_audio,
     // synchronous reset back to 0,0
     input logic reset,
+	input logic Pal50,			// PAL50 switch SW[0], set to 1 for 576p resolution, 0 for 480p resolution
     input logic [23:0] rgb,
-    input logic [AUDIO_BIT_WIDTH-1:0] audio_sample_word [1:0],
+    input logic [15:0] audio_sample_word [1:0],
 
     // These outputs go to your HDMI port
     output logic [2:0] tmds,
@@ -78,119 +36,56 @@ module hdmi
     // All outputs below this line stay inside the FPGA
     // They are used (by you) to pick the color each pixel should have
     // i.e. always_ff @(posedge pixel_clk) rgb <= {8'd0, 8'(cx), 8'(cy)};
-    output logic [BIT_WIDTH-1:0] cx,
-    output logic [BIT_HEIGHT-1:0] cy,
+    output logic [9:0] cx,
+    output logic [9:0] cy,
 
     // The screen is at the upper left corner of the frame.
     // 0,0 = 0,0 in video
     // the frame includes extra space for sending auxiliary data
-    output logic [BIT_WIDTH-1:0] frame_width,
-    output logic [BIT_HEIGHT-1:0] frame_height,
-    output logic [BIT_WIDTH-1:0] screen_width,
-    output logic [BIT_HEIGHT-1:0] screen_height
-)/*synthesis syn_romstyle="distributed_rom"*/;
+    output logic [9:0] frame_width,
+    output logic [9:0] frame_height,
+    output logic [9:0] screen_width,
+    output logic [9:0] screen_height
+);
+
 initial begin
-  cx = START_X;
-  cy = START_Y;
+  cx = 10'd0;
+  cy = 10'd0;
 end
 
 localparam int NUM_CHANNELS = 3;
 logic hsync;
 logic vsync;
 
-logic [BIT_WIDTH-1:0] hsync_pulse_start, hsync_pulse_size;
-logic [BIT_HEIGHT-1:0] vsync_pulse_start, vsync_pulse_size;
+logic [9:0] hsync_pulse_start, hsync_pulse_size;
+logic [9:0] vsync_pulse_start, vsync_pulse_size;
 logic invert;
 
-// See CEA-861-D for more specifics formats described below.
-generate
-    case (VIDEO_ID_CODE)
-        1:
-        begin
-            assign frame_width = 800;
-            assign frame_height = 525;
-            assign screen_width = 640;
-            assign screen_height = 480;
-            assign hsync_pulse_start = 16;
-            assign hsync_pulse_size = 96;
-            assign vsync_pulse_start = 10;
-            assign vsync_pulse_size = 2;
-            assign invert = 1;
-            end
-        2, 3:
-        begin
-            assign frame_width = 858;
-            assign frame_height = 525;
-            assign screen_width = 720;
-            assign screen_height = 480;
-            assign hsync_pulse_start = 16;
-            assign hsync_pulse_size = 62;
-            assign vsync_pulse_start = 9;
-            assign vsync_pulse_size = 6;
-            assign invert = 1;
-            end
-        4:
-        begin
-            assign frame_width = 1650;
-            assign frame_height = 750;
-            assign screen_width = 1280;
-            assign screen_height = 720;
-            assign hsync_pulse_start = 110;
-            assign hsync_pulse_size = 40;
-            assign vsync_pulse_start = 5;
-            assign vsync_pulse_size = 5;
-            assign invert = 0;
-        end
-        16, 34:
-        begin
-            assign frame_width = 2200;
-            assign frame_height = 1125;
-            assign screen_width = 1920;
-            assign screen_height = 1080;
-            assign hsync_pulse_start = 88;
-            assign hsync_pulse_size = 44;
-            assign vsync_pulse_start = 4;
-            assign vsync_pulse_size = 5;
-            assign invert = 0;
-        end
-        17, 18:
-        begin
-            assign frame_width = 864;
-            assign frame_height = 625;
-            assign screen_width = 720;
-            assign screen_height = 576;
-            assign hsync_pulse_start = 12;
-            assign hsync_pulse_size = 64;
-            assign vsync_pulse_start = 5;
-            assign vsync_pulse_size = 5;
-            assign invert = 1;
-        end
-        19:
-        begin
-            assign frame_width = 1980;
-            assign frame_height = 750;
-            assign screen_width = 1280;
-            assign screen_height = 720;
-            assign hsync_pulse_start = 440;
-            assign hsync_pulse_size = 40;
-            assign vsync_pulse_start = 5;
-            assign vsync_pulse_size = 5;
-            assign invert = 0;
-        end
-        95, 105, 97, 107:
-        begin
-            assign frame_width = 4400;
-            assign frame_height = 2250;
-            assign screen_width = 3840;
-            assign screen_height = 2160;
-            assign hsync_pulse_start = 176;
-            assign hsync_pulse_size = 88;
-            assign vsync_pulse_start = 8;
-            assign vsync_pulse_size = 10;
-            assign invert = 0;
-        end
-    endcase
-endgenerate
+// TODO: switch PAL/NTSC only inside VBLANK/VSYNC
+always_comb begin
+	if (Pal50) begin
+		frame_width = 864;
+		frame_height = 625;
+		screen_width = 720;
+		screen_height = 576;
+		hsync_pulse_start = 12;
+		hsync_pulse_size = 64;
+		vsync_pulse_start = 5;
+		vsync_pulse_size = 5;
+		invert = 1;
+	end else begin
+		frame_width = 858;
+		frame_height = 525;
+		screen_width = 720;
+		screen_height = 480;
+		hsync_pulse_start = 16;
+		hsync_pulse_size = 62;
+		vsync_pulse_start = 9;
+		vsync_pulse_size = 6;
+		invert = 1;
+	end
+end
+
 
 always_comb begin
     hsync <= invert ^ (cx >= screen_width + hsync_pulse_start && cx < screen_width + hsync_pulse_start + hsync_pulse_size);
@@ -204,28 +99,18 @@ always_comb begin
         vsync <= invert ^ (cy >= screen_height + vsync_pulse_start && cy < screen_height + vsync_pulse_start + vsync_pulse_size);
 end
 
-localparam real VIDEO_RATE = (VIDEO_ID_CODE == 1 ? 25.2E6
-    : VIDEO_ID_CODE == 2 || VIDEO_ID_CODE == 3 ? 27.027E6
-    : VIDEO_ID_CODE == 4 ? 74.25E6
-    : VIDEO_ID_CODE == 16 ? 148.5E6
-    : VIDEO_ID_CODE == 17 || VIDEO_ID_CODE == 18 ? 27E6
-    : VIDEO_ID_CODE == 19 ? 74.25E6
-    : VIDEO_ID_CODE == 34 ? 74.25E6
-    : VIDEO_ID_CODE == 95 || VIDEO_ID_CODE == 105 || VIDEO_ID_CODE == 97 || VIDEO_ID_CODE == 107 ? 594E6
-    : 0) * (VIDEO_REFRESH_RATE == 59.94 || VIDEO_REFRESH_RATE == 29.97 ? 1000.0/1001.0 : 1); // https://groups.google.com/forum/#!topic/sci.engr.advanced-tv/DQcGk5R_zsM
-
 // Wrap-around pixel position counters indicating the pixel to be generated by the user in THIS clock and sent out in the NEXT clock.
 always_ff @(posedge clk_pixel)
 begin
     if (reset)
     begin
-        cx <= BIT_WIDTH'(START_X);
-        cy <= BIT_HEIGHT'(START_Y);
+        cx <= 'd0;
+        cy <= 'd0;
     end
     else
     begin
-        cx <= cx == frame_width-1'b1 ? BIT_WIDTH'(0) : cx + 1'b1;
-        cy <= cx == frame_width-1'b1 ? cy == frame_height-1'b1 ? BIT_HEIGHT'(0) : cy + 1'b1 : cy;
+        cx <= cx == frame_width-1'b1 ? 10'd0 : cx + 1'b1;
+        cy <= cx == frame_width-1'b1 ? cy == frame_height-1'b1 ? 10'd0 : cy + 1'b1 : cy;
     end
 end
 
@@ -302,21 +187,34 @@ generate
         // See Section 5.2.3.4
         logic [23:0] header;
         logic [55:0] sub [3:0];
+
+
         logic video_field_end;
         assign video_field_end = cx == screen_width - 1'b1 && cy == screen_height - 1'b1;
+
         logic [4:0] packet_pixel_counter;
-        packet_picker #(
-            .VIDEO_ID_CODE(VIDEO_ID_CODE),
-            .VIDEO_RATE(VIDEO_RATE),
-            .IT_CONTENT(IT_CONTENT),
-            .AUDIO_RATE(AUDIO_RATE),
-            .AUDIO_BIT_WIDTH(AUDIO_BIT_WIDTH),
-            .VENDOR_NAME(VENDOR_NAME),
-            .PRODUCT_DESCRIPTION(PRODUCT_DESCRIPTION),
-            .SOURCE_DEVICE_INFORMATION(SOURCE_DEVICE_INFORMATION)
-        ) packet_picker (.clk_pixel(clk_pixel), .clk_audio(clk_audio), .reset(reset), .video_field_end(video_field_end), .packet_enable(packet_enable), .packet_pixel_counter(packet_pixel_counter), .audio_sample_word(audio_sample_word), .header(header), .sub(sub));
-        logic [8:0] packet_data;
-        packet_assembler packet_assembler (.clk_pixel(clk_pixel), .reset(reset), .data_island_period(data_island_period), .header(header), .sub(sub), .packet_data(packet_data), .counter(packet_pixel_counter));
+        packet_picker packet_picker (
+			.clk_pixel(clk_pixel), 
+			.clk_audio(clk_audio), 
+			.reset(reset), 
+			.Pal50(Pal50),
+			.video_field_end(video_field_end), 
+			.packet_enable(packet_enable), 
+			.packet_pixel_counter(packet_pixel_counter), 
+			.audio_sample_word(audio_sample_word), 
+			.header(header), 
+			.sub(sub)
+		);
+        
+		logic [8:0] packet_data;
+        packet_assembler packet_assembler (
+			.clk_pixel(clk_pixel), 
+			.reset(reset), 
+			.data_island_period(data_island_period), 
+			.header(header), .sub(sub), 
+			.packet_data(packet_data), 
+			.counter(packet_pixel_counter)
+		);
 
 
         always_ff @(posedge clk_pixel)
@@ -340,8 +238,12 @@ generate
             end
         end
     end
+
+
     else // DVI_OUTPUT = 1
-    begin
+    
+	
+	begin
         always_ff @(posedge clk_pixel)
         begin
             if (reset)
@@ -371,6 +273,13 @@ generate
     end
 endgenerate
 
-serializer #(.NUM_CHANNELS(NUM_CHANNELS), .VIDEO_RATE(VIDEO_RATE)) serializer(.clk_pixel(clk_pixel), .clk_pixel_x5(clk_pixel_x5), .reset(reset), .tmds_internal(tmds_internal), .tmds(tmds), .tmds_clock(tmds_clock));
+serializer ser (
+	.clk_pixel(clk_pixel), 
+	.clk_pixel_x5(clk_pixel_x5), 
+	.reset(reset), 
+	.tmds_internal(tmds_internal), 
+	.tmds(tmds), 
+	.tmds_clock(tmds_clock)
+);
 
 endmodule
