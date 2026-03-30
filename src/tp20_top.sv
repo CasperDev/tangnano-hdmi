@@ -27,14 +27,23 @@ wire [23:0] rgb;
 wire [9:0] pixX, frameWidth, screenWidth;
 wire [9:0] pixY, frameHeight, screenHeight;
 
+wire [12:0] vram_addr;
+wire [7:0] vram_data;
+reg [7:0] VRAM[0:6*1024-1];
+initial begin
+	$readmemh("test/vramRG6.hex",VRAM);
+end
+
+assign vram_data = VRAM[vram_addr];
+
 gen_video just_border(
   .I_clk_pixel(clk_pixel),
   .I_reset_n(sys_reset_n),
   .Pal50(I_PAL50),
   .pixX(pixX),
   .pixY(pixY),
-  .screenWidth(screenWidth),
-  .screenHeight(screenHeight),
+  .vram_addr(vram_addr),
+  .vram_data(vram_data),
   .rgb(rgb)
 );
 wire [15:0] sample_gen;

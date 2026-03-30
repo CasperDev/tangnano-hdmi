@@ -9,7 +9,6 @@ package configPackage;
     localparam SCREENHEIGHT = 480;
     localparam TOTALWIDTH = 858;
     localparam TOTALHEIGHT = 525;
-    localparam SCALE = 3;
 
     localparam CLKFRQ = 27000;
   `endif
@@ -19,7 +18,6 @@ package configPackage;
     localparam SCREENHEIGHT = 576;
     localparam TOTALWIDTH = 864;
     localparam TOTALHEIGHT = 625;
-    localparam SCALE = 3;
 
     localparam CLKFRQ = 27000;
   `endif
