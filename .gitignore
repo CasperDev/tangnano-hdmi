@@ -1,4 +1,7 @@
 impl/gwsynthesis
 impl/pnr
 impl/temp
-
+test/dsim_work
+test/dsim.env
+test/dsim.log
+test/metrics.db
