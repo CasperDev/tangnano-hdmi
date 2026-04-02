@@ -153,7 +153,8 @@ always@(*) begin
 end
 
 reg [4:0] vdg_clk_div = 0;
-reg [4:0] vram_addr_lo = 0;
+reg [5:0] vram_addr_lo = 0;
+reg fetchPixels = 0;
 always@( posedge I_clk_pixel or negedge I_reset_n ) begin
 	if (!I_reset_n) begin
 		vdg_clk_div <= 'd0;
@@ -164,9 +165,13 @@ always@( posedge I_clk_pixel or negedge I_reset_n ) begin
 	end else if (pixY[0] == 1'b0 && pixX == FIRST_FETCH) begin
 		vdg_clk_div <= 'd0;		
 		vram_addr_lo <= 'd0;
+		fetchPixels <= 1'b1;
 	end else if (vdg_clk_div == 'd29) begin
 		vdg_clk_div <= 'd0;
-		vram_addr_lo <= vram_addr_lo + 1'b1;
+		if (vram_addr_lo == 'd31)
+			fetchPixels <= 1'b0;
+		else
+			vram_addr_lo <= vram_addr_lo + 1'b1;
 	end else begin
 		vdg_clk_div <= vdg_clk_div + 1'b1;
 	end
