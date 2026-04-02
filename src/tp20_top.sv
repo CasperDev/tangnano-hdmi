@@ -16,17 +16,19 @@ module top(
 
 
 // ------------ Clocks --------------------
-wire clk_pixel = I_clk27;       // HDMI pixel clock           27MHz for 480p, 274.25MHz for 720p
-wire clk_hdmi_serial;   		// HDMI serial clock (5 x clk_pixel) 135MHz for 480p, 371.25MHz for 720p
-wire clk_audio;         		// HDMI audio clock 32kHz
+
+wire clk_pixel = I_clk27;       // HDMI pixel clock           27MHz for 480p (NTSC) and 576p (PAL)
+wire clk_hdmi_serial;   		// HDMI serial clock (5 x clk_pixel) 135MHz for 480p and 576p
+wire clk_audio;         		// HDMI audio clock 48kHz
 wire sys_reset_n;       		// 0 when clocks NOT ready or button pressed
 
-clocks #(.DEVICE("GW2A-18C") ) clocks_inst(I_clk27,I_reset_n, clk_pixel, clk_hdmi_serial,clk_audio,sys_reset_n);
+clocks #(.DEVICE("GW2A-18C") ) clocks_inst(
+	I_clk27, I_reset_n, clk_pixel, clk_hdmi_serial, clk_audio, sys_reset_n
+);
 
-wire [23:0] rgb;
-wire [9:0] pixX, frameWidth, screenWidth;
-wire [9:0] pixY, frameHeight, screenHeight;
-
+// ---------- VRAM (temporarly) ------------
+wire AG = 1'b1;
+wire CSS = 1'b0;
 wire [12:0] vram_addr;
 wire [7:0] vram_data;
 reg [7:0] VRAM[0:6*1024-1];
@@ -36,16 +38,26 @@ end
 
 assign vram_data = VRAM[vram_addr];
 
+// --------- Video Generator ---------------
+
+wire [23:0] rgb;
+wire [9:0] pixX, frameWidth, screenWidth;
+wire [9:0] pixY, frameHeight, screenHeight;
+
 gen_video just_border(
   .I_clk_pixel(clk_pixel),
   .I_reset_n(sys_reset_n),
   .Pal50(I_PAL50),
+  .AG(AG), .CSS(CSS),
   .pixX(pixX),
   .pixY(pixY),
   .vram_addr(vram_addr),
   .vram_data(vram_data),
   .rgb(rgb)
 );
+
+// ----------- Audio Generator --------------
+
 wire [15:0] sample_gen;
 wire [15:0] sample;
 
@@ -56,6 +68,8 @@ gen_audio sin_1kHz(
 );
 
 assign sample = (I_play_audio_n == 1'b0) ? sample_gen : 16'd0;
+
+// ----------- HDMI output -------------------
 
 hdmi_top video(
 	.I_reset_n(sys_reset_n),    // system reset (Active low)

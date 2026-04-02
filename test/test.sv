@@ -6,9 +6,9 @@ initial begin
 	$dumpfile("test.vcd");
 	$dumpvars(0);
 end
-bit clk_27 = 1'b0;
-bit clk_7 = 1'b0;
-bit rst_n = 1'b1;
+reg clk_27 = 1'b0;
+reg clk_7 = 1'b0;
+reg rst_n = 1'b1;
 
 wire [23:0] RGB;
 
@@ -24,27 +24,33 @@ always begin
 	#69 clk_7 = 1'b0;
 end
 
-// HDMI timings
-bit [9:0] pixX,pixY;
+// -------- Setup FRAME -------------
 
-always_ff @(  posedge clk_27 or negedge rst_n ) begin : HDMI_counters
+localparam UsePAL = 1'b0;			// PAL=1, 	NTSC=0
+localparam FRAME_WIDTH = 10'd856;	// 864		856
+localparam FRAME_HEIGHT = 10'd525;	// 525		625
+
+// HDMI timings
+reg [9:0] pixX,pixY;
+always@(  posedge clk_27 or negedge rst_n ) begin : HDMI_counters
 	if (!rst_n) begin
 		pixX <= 'd0;
 		pixY <= 'd0;
 	end else begin
-		if (pixX == 'd857) begin
+		if (pixX == FRAME_WIDTH-1) begin
 			pixX <= 'd0;
-			pixY <= (pixY == 524) ? 'd0 : pixY + 1'b1;
+			pixY <= (pixY == FRAME_HEIGHT-1) ? 'd0 : pixY + 1'b1;
 		end else begin
 			pixX <= pixX + 1'b1;
 		end
 	end
 end
-// *******************************************************
+
+// -------- Setup VDG -------------
 // I/O Pins
-bit INT = 0;	// INT_n as output
-bit AG = 1'b0, AS = 1'b0, CSS = 1'b0, INV = 1'b0, INTEXT = 1'b0;
-bit [2:0] GM = 3'b000;
+reg INT = 1'b0;	// INT_n as output
+reg AG = 1'b1, AS = 1'b0, CSS = 1'b0, INV = 1'b0, INTEXT = 1'b0;
+reg [2:0] GM = 3'b000;
 
 reg [7:0] VRAM[0:6*1024-1];
 initial begin
@@ -54,9 +60,11 @@ wire [12:0] vram_addr;
 wire [7:0] vram_data;
 assign vram_data = VRAM[vram_addr];
 
+
 gen_video renderer(
   .I_clk_pixel(clk_27), .I_reset_n(rst_n),
-  .Pal50(1'b0),
+  .Pal50(UsePAL),
+  .AG(AG), .CSS(CSS),
   .pixX(pixX), .pixY(pixY),
   .vram_addr(vram_addr), .vram_data(vram_data),
   .rgb(RGB)

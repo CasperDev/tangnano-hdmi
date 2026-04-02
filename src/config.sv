@@ -10,7 +10,6 @@ package configPackage;
     localparam TOTALWIDTH = 858;
     localparam TOTALHEIGHT = 525;
 
-    localparam CLKFRQ = 27000;
   `endif
 
   `ifdef RES_576P
@@ -19,12 +18,6 @@ package configPackage;
     localparam TOTALWIDTH = 864;
     localparam TOTALHEIGHT = 625;
 
-    localparam CLKFRQ = 27000;
   `endif
-
-  localparam COLLEN = 80;
-  localparam POWERUPNS = 100000000.0;
-  localparam CLKPERNS = (1.0/CLKFRQ)*1000000.0;
-  //localparam int POWERUPCYCLES = $ceil( POWERUPNS/CLKPERNS );
 
 endpackage

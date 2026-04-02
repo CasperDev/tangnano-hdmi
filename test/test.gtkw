@@ -1,67 +1,40 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Thu Feb 19 22:14:40 2026
+[*] Wed Apr 01 10:04:15 2026
 [*]
 [dumpfile] "E:\TangNano\tangnano-hdmi\test\test.vcd"
-[dumpfile_mtime] "Thu Feb 19 18:23:26 2026"
-[dumpfile_size] 37133105
+[dumpfile_mtime] "Wed Apr 01 08:55:01 2026"
+[dumpfile_size] 42372588
 [savefile] "E:\TangNano\tangnano-hdmi\test\test.gtkw"
-[timestart] 0
-[size] 1504 867
-[pos] 1907 -32
-*-10.072411 4052 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 18168870
+[size] 1783 888
+[pos] -1 -1
+*-12.072411 18186222 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test_tb.
 [sst_width] 197
-[signals_width] 222
+[signals_width] 294
 [sst_expanded] 1
-[sst_vpaned_height] 248
+[sst_vpaned_height] 256
 @28
+test_tb.renderer.I_reset_n
 test_tb.clk_7
-@24
-test_tb.vdg_x[9:0]
-test_tb.vdg_y[9:0]
-@28
-[color] 2
-test_tb.HS
-[color] 2
-test_tb.LBORDER
 [color] 3
-test_tb.vdg_DE
-test_tb.fetch_pulse_short
-@22
-test_tb.fetch_addr_lo_short[4:0]
-@28
-test_tb.fetch_pulse_long
-@22
-test_tb.fetch_addr_lo_long[3:0]
-@24
-test_tb.fetch_counter[8:0]
-@28
-test_tb.restart_vdg
 test_tb.clk_27
 @24
-test_tb.hdmi_x[9:0]
-test_tb.hdmi_y[9:0]
-@29
-[color] 1
-test_tb.hdmi_fetch_AG_0
-@28
-[color] 6
-test_tb.hdmi_draw_LB_0
-test_tb.hdmi_draw_buf_0
+test_tb.renderer.pixX[9:0]
 @22
-test_tb.hdmi_fetch_buf_0[7:0]
+test_tb.renderer.pixY[9:0]
 @28
-[color] 1
-test_tb.hdmi_fetch_RB_0
-test_tb.hdmi_draw_RB_0
-[color] 1
-test_tb.hdmi_fetch_AG_1
-[color] 6
-test_tb.hdmi_draw_LB_1
-test_tb.hdmi_draw_buf_1
+test_tb.renderer.AG
+test_tb.renderer.lbuf_rd_sel
 @22
-test_tb.hdmi_fetch_buf_1[7:0]
+test_tb.renderer.lbuf_wr_idx[7:0]
+@23
+test_tb.renderer.vram_addr_lo[5:0]
 @28
-test_tb.hdmi_fetch_RB_1
+test_tb.renderer.LINEAG[1:0]
+@22
+test_tb.renderer.BORDERRGB[23:0]
+test_tb.renderer.RGBOUT[23:0]
 [pattern_trace] 1
 [pattern_trace] 0

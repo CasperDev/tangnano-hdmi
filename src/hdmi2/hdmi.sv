@@ -3,17 +3,6 @@
 
 module hdmi 
 #(
-
-    // The IT content bit indicates that image samples are generated in an ad-hoc
-    // manner (e.g. directly from values in a framebuffer, as by a PC video
-    // card) and therefore aren't suitable for filtering or analog
-    // reconstruction.  This is probably what you want if you treat pixels
-    // as "squares".  If you generate a properly bandlimited signal or obtain
-    // one from elsewhere (e.g. a camera), this can be turned off.
-    //
-    // This flag also tends to cause receivers to treat RGB values as full
-    // range (0-255).
-
     // A true HDMI signal sends auxiliary data (i.e. audio, preambles) which prevents it from being parsed by DVI signal sinks.
     // HDMI signal sinks are fortunately backwards-compatible with DVI signals.
     // Enable this flag if the output should be a DVI signal. You might want to do this to reduce resource usage or if you're only outputting video.
@@ -25,7 +14,7 @@ module hdmi
     input logic clk_audio,
     // synchronous reset back to 0,0
     input logic reset,
-	input logic Pal50,			// PAL50 switch SW[0], set to 1 for 576p resolution, 0 for 480p resolution
+	input logic Pal50,			// set to 1 for 576p resolution, 0 for 480p resolution
     input logic [23:0] rgb,
     input logic [15:0] audio_sample_word [1:0],
 
@@ -41,11 +30,11 @@ module hdmi
 
     // The screen is at the upper left corner of the frame.
     // 0,0 = 0,0 in video
-    // the frame includes extra space for sending auxiliary data
-    output logic [9:0] frame_width,
-    output logic [9:0] frame_height,
-    output logic [9:0] screen_width,
-    output logic [9:0] screen_height
+    // the frame includes extra space for sending auxiliary data        480p    576p
+    output logic [9:0] frame_width,                                 //  858     864
+    output logic [9:0] frame_height,                                //  525     625
+    output logic [9:0] screen_width,                                //  720     720
+    output logic [9:0] screen_height                                //  480     576
 );
 
 initial begin

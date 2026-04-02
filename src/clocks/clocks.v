@@ -72,7 +72,7 @@ defparam hdmi_pll.DEVICE = DEVICE;
   assign pixel_lock = 1'b1;
 
 
-  localparam AUDIO_CLK_DELAY = CLKFRQ * 1000 / 48000 / 2;
+  localparam AUDIO_CLK_DELAY = 1125; // 27000000 / 48000 / 2;
   reg [$clog2(AUDIO_CLK_DELAY)-1:0] audio_divider;
   reg clk_audio = 0;
 
